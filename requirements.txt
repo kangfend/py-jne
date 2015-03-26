@@ -1,0 +1,2 @@
+requests==2.6.0
+responses==0.3.0

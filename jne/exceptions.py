@@ -1,0 +1,2 @@
+class JneAPIError(Exception):
+    pass
