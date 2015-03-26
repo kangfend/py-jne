@@ -3,13 +3,13 @@ from setuptools import setup
 setup(
     name='py-jne',
     packages=['jne'],
-    version='0.1.0',
+    version='0.1.1',
     description='Python JNE',
     license='MIT',
     author='Sutrisno Efendi',
     author_email='kangfend@gmail.com',
     url='https://github.com/kangfend/py-jne',
-    download_url='https://github.com/kangfend/py-jne/tarball/0.1.0',
+    download_url='https://github.com/kangfend/py-jne/tarball/0.1.1',
     keywords=['JNE', 'Tracking', 'Courier', 'Indonesia'],
     install_requires=['requests==2.6.0'],
     classifiers=[
