@@ -12,7 +12,8 @@ import json
 import requests
 from requests.exceptions import RequestException
 
-from .constants import URL_CITY_FROM, URL_CITY_TO, URL_TARIFF, URL_TRACKING
+from .constants import (URL_CITY_FROM, URL_CITY_TO, URL_TARIFF, URL_TRACKING,
+                        URL_NEARBY)
 from .exceptions import JneAPIError
 from .utils import pretty_print as pprint
 
@@ -91,6 +92,19 @@ class Jne(object):
                              becomes more readable
         """
         response = self._request(method='POST', api_call=URL_TRACKING + airbill)
+        if pretty_print:
+            return pprint(response)
+        return response
+
+    def find_nearby(self, latitude, longitude, pretty_print=False):
+        """Return dict of JNE nearby based latitude and longitude
+        :param latitude: (required) Latitude
+        :param longitude: (required) Longitude
+        :param pretty_print: (optional True or False) To print the result
+                             becomes more readable
+        """
+        data = {'latitude': latitude, 'longitude': longitude}
+        response = self._request(method='POST', api_call=URL_NEARBY, data=data)
         if pretty_print:
             return pprint(response)
         return response
