@@ -3,7 +3,8 @@ import responses
 import unittest
 
 from jne import Jne
-from jne.constants import URL_TRACKING, URL_TARIFF, URL_CITY_FROM, URL_CITY_TO
+from jne.constants import (URL_TRACKING, URL_TARIFF, URL_CITY_FROM, URL_CITY_TO,
+                           URL_NEARBY)
 
 
 class JneAPITest(unittest.TestCase):
@@ -148,3 +149,36 @@ class JneAPITest(unittest.TestCase):
         self.assertEqual(response['detail'][1]['label'], 'JAKARTA BARAT')
         self.assertEqual(response['detail'][2]['code'], 'CGK10300')
         self.assertEqual(response['detail'][2]['label'], 'JAKARTA PUSAT')
+
+    @responses.activate
+    def test_find_nearby(self):
+        # Mock API response
+        response_body = {
+            "places": [
+                {
+                    "custaddr1": "JL CIKINI RAYA NO40 MENTENG JAKARTA PUSAT",
+                    "custaddr2": None,
+                    "custname": "JNE ASP SEVEL CIKINI",
+                    "jarak": "     0.10",
+                    "latitude": "-6.19164",
+                    "longitude": "106.8385"
+                }, {
+                    "custaddr1": "JL KWITANG RAYA NO 19-20 JAKARTA PUSAT",
+                    "custaddr2": None,
+                    "custname": "JNE AGEN 0200033",
+                    "jarak": "     0.26",
+                    "latitude": "-6.1808",
+                    "longitude": "106.8392"
+                }
+            ]
+        }
+
+        self.register_response(responses.POST, URL_NEARBY,
+                               body=json.dumps(response_body))
+
+        response = self.api.find_nearby(latitude='-6.1886183', longitude='106.8387325')
+
+        self.assertEqual(response['places'][0]['custname'], 'JNE ASP SEVEL CIKINI')
+        self.assertEqual(response['places'][0]['jarak'].strip(), '0.10')
+        self.assertEqual(response['places'][1]['custname'], 'JNE AGEN 0200033')
+        self.assertEqual(response['places'][1]['jarak'].strip(), '0.26')
