@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+
+"""
+jne.api
+~~~~~~~~~~~
+This module contains functionality for access to JNE API calls,
+and miscellaneous methods that are useful when dealing with the JNE API
+"""
+
 import json
 
 import requests
@@ -10,10 +19,16 @@ from .utils import pretty_print as pprint
 
 class Jne(object):
     def __init__(self, api_key=None, username=None):
+        """Instantiates an instance of Jne. Takes optional parameters for
+        authentication (see below).
+        :param api_key: Your api key from JNE
+        :param username: Your username from JNE
+        """
         self.api_key = api_key
         self.username = username
 
     def _request(self, api_call, method='GET', data={}, params={}):
+        """Internal request method"""
         method = method.upper()
         payload = {'api_key': self.api_key, 'username': self.username}
 
@@ -31,6 +46,11 @@ class Jne(object):
         return json.loads(response.text)
 
     def get_from_code(self, city, pretty_print=False):
+        """Return dict of JNE origin city code
+        :param city: (required) Name of city that you want to know the code
+        :param pretty_print: (optional True or False) To print the result
+                             becomes more readable
+        """
         response = self._request(method='POST',
                                  api_call=URL_CITY_FROM + city)
         if pretty_print:
@@ -38,6 +58,11 @@ class Jne(object):
         return response
 
     def get_target_code(self, city, pretty_print=False):
+        """Return dict of JNE destination city code
+        :param city: (required) Name of city that you want to know the code
+        :param pretty_print: (optional True or False) To print the result
+                             becomes more readable
+        """
         response = self._request(method='POST', api_call=URL_CITY_TO,
                                  params={'term': city})
         if pretty_print:
@@ -45,6 +70,13 @@ class Jne(object):
         return response
 
     def check_tariff(self, city_from, city_to, weight=1, pretty_print=False):
+        """return dict of JNE tariff
+        :param city_from: (required) Origin city code. Ex: "CGK10000"
+        :param city_to: (required) Target city code. Ex: "CBN10000"
+        :param weight: (required) Weight of item.
+        :param pretty_print: (optional True or False) To print the result
+                             becomes more readable
+        """
         data = {'from': city_from, 'thru': city_to, 'weight': weight}
         response = self._request(method='POST', api_call=URL_TARIFF,
                                  data=data)
@@ -53,6 +85,11 @@ class Jne(object):
         return response
 
     def tracking(self, airbill, pretty_print=False):
+        """Return dict of JNE tracking detail
+        :param airbill: (required) Airbill number from JNE
+        :param pretty_print: (optional True or False) To print the result
+                             becomes more readable
+        """
         response = self._request(method='POST', api_call=URL_TRACKING + airbill)
         if pretty_print:
             return pprint(response)
