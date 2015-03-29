@@ -14,7 +14,7 @@ from requests.exceptions import RequestException
 
 from .constants import (URL_CITY_FROM, URL_CITY_TO, URL_TARIFF, URL_TRACKING,
                         URL_NEARBY)
-from .exceptions import JneAPIError
+from .exceptions import JneError, JneAPIError
 from .utils import pretty_print as pprint
 
 
@@ -42,8 +42,17 @@ class Jne(object):
                 response = requests.post(api_call, params=params, data=data)
             else:
                 raise ValueError("Method '{}' is not supported".format(method))
+
+            if response.text == '':
+                raise JneAPIError(
+                    message='JNE API returned data that we cannot process.',
+                    error_code=422
+                )
         except RequestException as error:
-            raise JneAPIError(error)
+            raise JneError(
+                message=error.message,
+                error_code=error.errno
+            )
         return json.loads(response.text)
 
     def get_from_code(self, city, pretty_print=False):
@@ -53,7 +62,7 @@ class Jne(object):
                              becomes more readable
         """
         response = self._request(method='POST',
-                                 api_call=URL_CITY_FROM + city)
+                                 api_call=URL_CITY_FROM + str(city))
         if pretty_print:
             return pprint(response)
         return response
@@ -91,7 +100,7 @@ class Jne(object):
         :param pretty_print: (optional True or False) To print the result
                              becomes more readable
         """
-        response = self._request(method='POST', api_call=URL_TRACKING + airbill)
+        response = self._request(method='POST', api_call=URL_TRACKING + str(airbill))
         if pretty_print:
             return pprint(response)
         return response
