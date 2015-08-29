@@ -137,9 +137,8 @@ class JneAPITest(unittest.TestCase):
             ]
         }
 
-        self.register_response(responses.POST, URL_CITY_TO + '?term=jakarta',
-                               body=json.dumps(response_body),
-                               match_querystring={'term': 'jakarta'})
+        self.register_response(responses.POST, URL_CITY_TO + 'jakarta',
+                               body=json.dumps(response_body))
 
         response = self.api.get_target_code('jakarta')
 

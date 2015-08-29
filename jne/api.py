@@ -73,8 +73,8 @@ class Jne(object):
         :param pretty_print: (optional True or False) To print the result
                              becomes more readable
         """
-        response = self._request(method='POST', api_call=URL_CITY_TO,
-                                 params={'term': city})
+        response = self._request(method='POST',
+                                 api_call=URL_CITY_TO + str(city))
         if pretty_print:
             return pprint(response)
         return response
